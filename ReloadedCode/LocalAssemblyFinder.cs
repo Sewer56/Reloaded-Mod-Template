@@ -20,7 +20,9 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using Reloaded;
 
 namespace Reloaded_Mod_Template.ReloadedCode
 {
@@ -28,7 +30,7 @@ namespace Reloaded_Mod_Template.ReloadedCode
     /// You know how when you inject a DLL into a process it will fail to find any of the libraries that 
     /// go along with it? I do too, worry not, this will help you.
     /// </summary>
-    public static class LocalAssemblyFinder
+    public static class LocalAssemblyFinder 
     {
         /// <summary>
         /// Finds and retrieves an Assembly/Module/DLL from the libraries folder in the case it is not
@@ -41,13 +43,20 @@ namespace Reloaded_Mod_Template.ReloadedCode
 
             // Get the path to the mod's libraries folder.
             string localLibrary = modFolder + "\\Libraries\\";
+            string thisFolderLibrary = modFolder + "\\";
+            string dllName = new AssemblyName(args.Name).Name + ".dll";
 
             // Append the assembly name.
-            localLibrary += new AssemblyName(args.Name).Name + ".dll";
+            localLibrary += dllName;
+            thisFolderLibrary += dllName;
 
             // Check if the library is present in a static compile.
             if (File.Exists(localLibrary))
                 return Assembly.LoadFrom(localLibrary);
+
+            // Check if the library is present in a static compile.
+            if (File.Exists(thisFolderLibrary))
+                return Assembly.LoadFrom(thisFolderLibrary);
 
             // Else try to find it in the mod directory.
             else

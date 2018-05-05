@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Threading;
 using LiteNetLib;
 using Reloaded;
 using Reloaded.Process;
@@ -13,7 +15,7 @@ namespace Reloaded_Mod_Template.ReloadedCode
     public class Initializer
     {
         /// <summary>
-        /// This file contains the DLL Template for Reloaded Mod Loader mods.
+        /// This file and/or Initializer.cs contains the DLL Template for Reloaded Mod Loader mods.
         /// If you are looking for user code, please see Program.cs
         /// </summary>
         /// <param name="portAddress">Stores the memory location of the port.</param>
@@ -22,7 +24,19 @@ namespace Reloaded_Mod_Template.ReloadedCode
         {
             // Retrieve Assemblies from the "Libraries" folder.
             AppDomain.CurrentDomain.AssemblyResolve += LocalAssemblyFinder.ResolveAssembly;
-            Initialize(portAddress);
+            InitializeInternal(portAddress);
+        }
+
+
+        /// <summary>
+        /// This file contains the DLL Template for Reloaded Mod Loader mods.
+        /// If you are looking for user code, please see Program.cs
+        /// </summary>
+        /// <param name="portAddress">Stores the memory location of the port.</param>
+        public static void Initialize(IntPtr portAddress)
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += LocalAssemblyFinder.ResolveAssembly;
+            InitializeInternal(portAddress);
         }
 
         /// <summary>
@@ -31,7 +45,7 @@ namespace Reloaded_Mod_Template.ReloadedCode
         /// due to otherwise possible problems with static initialization of Program.
         /// </summary>
         /// <param name="portAddress">Stores the memory location of the port.</param>
-        public static void Initialize(IntPtr portAddress)
+        public static void InitializeInternal(IntPtr portAddress)
         {
             // Initialize Client
             InitClient(portAddress);
@@ -52,8 +66,11 @@ namespace Reloaded_Mod_Template.ReloadedCode
             // Setup Local Server Client
             EventBasedNetListener reloadedClientListener = new EventBasedNetListener();
             Client.ReloadedClient = new NetManager(reloadedClientListener, Strings.Loader.ServerConnectKey);
+            Client.ReloadedClient.MaxConnectAttempts = 5;
+            Client.ReloadedClient.ReconnectDelay = 100;
             Client.ReloadedClient.Start(IPAddress.Loopback, IPAddress.IPv6Loopback, 0);
             Client.ReloadedClient.Connect(IPAddress.Loopback.ToString(), Program.GameProcess.ReadMemory<int>(portAddress));
+            Client.ReloadedClient.DisconnectTimeout = Int64.MaxValue;
         }
 
         /// <summary>
@@ -64,8 +81,12 @@ namespace Reloaded_Mod_Template.ReloadedCode
         {
             // Set local game process.
             Program.GameProcess = ReloadedProcess.GetCurrentProcess();
-            Program.ModDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             Program.ExecutingGameLocation = Environment.GetCommandLineArgs()[0];
+            Program.ModDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            // For our libraries in a separate AppDomain executing main.dll
+            if (Program.ModDirectory.EndsWith("Libraries")) 
+                Program.ModDirectory = Path.GetDirectoryName(Program.ModDirectory);
 
             // Set up Reloaded Mod Loader bindings.
             Bindings.PrintText += Client.Print;
