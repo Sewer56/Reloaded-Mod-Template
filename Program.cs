@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using Reloaded;
 using Reloaded.Assembler;
 using Reloaded.Process;
 
 namespace Reloaded_Mod_Template
 {
-    public static class Program
+    public static unsafe class Program
     {
         /*
          *  Reloaded Mod Loader DLL Modification Template
@@ -101,9 +103,11 @@ namespace Reloaded_Mod_Template
         /// </summary>
         public static unsafe void Init()
         {
+            #if DEBUG
             Debugger.Launch();
+            #endif
+
             Bindings.PrintInfo("Hello World!");
-            Assembler.Assemble(new[] {"use32", "mov eax, ebx", "mov eax, 0x123456"});
         }
     }
 }
