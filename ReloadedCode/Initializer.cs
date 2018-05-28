@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using LiteNetLib;
 using Reloaded;
+using Reloaded.Paths;
 using Reloaded.Process;
 using Reloaded.Process.Memory;
 

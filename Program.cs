@@ -43,8 +43,23 @@ namespace Reloaded_Mod_Template
          *  utilities available.
          *
          *  -------------------------------------------------------------------------------
+         *  Extra Tip:
          *
-         *  Brief Walkthrough:
+         *  For Reloaded mod development, there are also additional libraries and packages
+         *  available on NuGet which provide you with extra functionality.
+         *
+         *  Examples include:
+         *  [Input] Reading controller information using Reloaded's input stack.
+         *  [IO] Accessing the individual Reloaded config files.
+         *  [Overlays] Easy to use D3D and external overlay code.
+         *
+         *  Simply search libReloaded on NuGet to find those extras and refer to
+         *  Reloaded-Mod-Samples subdirectory on Github for examples of using them (and
+         *  sample mods showing how Reloaded can be used).
+         *
+         *  -------------------------------------------------------------------------------
+         *
+         *  [Template] Brief Walkthrough:
          *
          *  > ReloadedCode/Initializer.cs
          *      Stores Reloaded Mod Loader DLL Template/Initialization Code.
