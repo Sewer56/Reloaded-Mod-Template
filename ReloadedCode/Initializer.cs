@@ -53,7 +53,8 @@ namespace Reloaded_Mod_Template.ReloadedCode
             InitBindings();
 
             // Call Init
-            Program.Init();
+            try { Program.Init(); }
+            catch (Exception Ex) { Bindings.PrintError($"Failure in initializing Reloaded Mod | {Ex.Message} | {Ex.StackTrace}"); } 
         }
 
         /// <summary>
