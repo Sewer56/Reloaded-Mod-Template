@@ -83,18 +83,18 @@ namespace Reloaded_Mod_Template.ReloadedCode
         public static void Print(string message, PrintMessageType printMessageType)
         {
             // Get string to print as bytes.
-            byte[] bytesToSend = Encoding.ASCII.GetBytes(message);
+            byte[] bytesToSend = Encoding.Unicode.GetBytes(message);
 
             // Build a Server Message with text to print.
             // The style of the message is user-set.
-            Message clientMessage = new Message((ushort)MessageTypes.MessageType.PrintText, bytesToSend);
+            Message clientMessage = new Message((ushort)MessageTypes.MessageType.PrintTextUnicode, bytesToSend);
             
             // Switch message type if necessary.
             switch (printMessageType)
             {
-                case PrintMessageType.PrintInfo: clientMessage.MessageType = (ushort)MessageTypes.MessageType.PrintInfo; break;
-                case PrintMessageType.PrintError: clientMessage.MessageType = (ushort)MessageTypes.MessageType.PrintError; break;
-                case PrintMessageType.PrintWarning: clientMessage.MessageType = (ushort)MessageTypes.MessageType.PrintWarning; break;
+                case PrintMessageType.PrintInfo: clientMessage.MessageType = (ushort)MessageTypes.MessageType.PrintInfoUnicode; break;
+                case PrintMessageType.PrintError: clientMessage.MessageType = (ushort)MessageTypes.MessageType.PrintErrorUnicode; break;
+                case PrintMessageType.PrintWarning: clientMessage.MessageType = (ushort)MessageTypes.MessageType.PrintWarningUnicode; break;
             }
              
             // Send the message.
