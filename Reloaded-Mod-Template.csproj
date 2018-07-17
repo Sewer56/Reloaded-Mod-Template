@@ -105,16 +105,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="libReloaded">
-      <Version>1.1.5</Version>
+      <Version>1.1.7</Version>
     </PackageReference>
     <PackageReference Include="libReloaded-Native">
-      <Version>1.1.3</Version>
+      <Version>1.1.7</Version>
     </PackageReference>
     <PackageReference Include="libReloaded-Networking">
-      <Version>1.1.4</Version>
+      <Version>1.1.7</Version>
     </PackageReference>
     <PackageReference Include="libReloaded-Paths">
-      <Version>1.1.3</Version>
+      <Version>1.1.7</Version>
     </PackageReference>
     <PackageReference Include="LiteNetLib-custom">
       <Version>0.0.1</Version>
