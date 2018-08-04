@@ -7,6 +7,7 @@ using System.Security.Permissions;
 using Reloaded;
 using Reloaded.Assembler;
 using Reloaded.Process;
+using Reloaded.Process.Memory;
 
 namespace Reloaded_Mod_Template
 {
