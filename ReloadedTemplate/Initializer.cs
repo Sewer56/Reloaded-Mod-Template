@@ -1,20 +1,36 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Threading;
 using LiteNetLib;
 using Reloaded;
 using Reloaded.Paths;
 using Reloaded.Process;
 using Reloaded.Process.Memory;
+using System.Security;
+using System.Security.Permissions;
 
-namespace Reloaded_Mod_Template.ReloadedCode
+namespace Reloaded_Mod_Template.ReloadedTemplate
 {
-    public class Initializer
+    /// <summary>
+    /// This class is simply a proxy for calling Init again from another AppDomain.
+    /// </summary>
+    public class InitProxy : MarshalByRefObject
     {
+        public void Run(IntPtr portLocation)
+        {
+            Init.Initialize(portLocation);
+        }
+    }
+
+    public class Init
+    {
+        /// <summary>
+        /// Contains our child AppDomain used for init-ing mods in their own separate worlds.
+        /// </summary>
+        static AppDomain _childDomain;
+
         /// <summary>
         /// This file and/or Initializer.cs contains the DLL Template for Reloaded Mod Loader mods.
         /// If you are looking for user code, please see Program.cs
@@ -24,16 +40,36 @@ namespace Reloaded_Mod_Template.ReloadedCode
         public static void Main(IntPtr portAddress)
         {
             // Retrieve Assemblies from the "Libraries" folder.
-            AppDomain.CurrentDomain.AssemblyResolve += LocalAssemblyFinder.ResolveAssembly;
-            InitializeInternal(portAddress);
+            AppDomain.CurrentDomain.AssemblyResolve += LocalAssemblyFinder.ResolveAppDomainAssembly;
+
+            // Try restarting in another AppDomain if possible.
+            try
+            {
+                // Give the new AppDomain full permissions.
+                PermissionSet permissionSet = new PermissionSet(PermissionState.Unrestricted);
+                permissionSet.AddPermission(new SecurityPermission(SecurityPermissionFlag.AllFlags));
+
+                // The ApplicationBase of the new domain should be the directory containing the current DLL.
+                AppDomainSetup appDomainSetup = new AppDomainSetup() { ApplicationBase = Path.GetDirectoryName(typeof(InitProxy).Assembly.Location) };
+                _childDomain = AppDomain.CreateDomain("Reloaded", null, appDomainSetup, permissionSet);
+
+                // Now make the new AppDomain load our code using our proxy.
+                Type proxyType = typeof(InitProxy);
+                var initProxy = (InitProxy)_childDomain.CreateInstanceFrom(proxyType.Assembly.Location, proxyType.FullName).Unwrap(); // Our AssemblyResolve will pick the missing DLL out.
+                initProxy.Run(portAddress);
+            }
+            catch (Exception ex)
+            {
+                Initialize(portAddress);
+            }            
         }
 
 
         /// <summary>
-        /// This file contains the DLL Template for Reloaded Mod Loader mods.
+        /// This file and/or Initializer.cs contains the DLL Template for Reloaded Mod Loader mods.
         /// If you are looking for user code, please see Program.cs
         /// </summary>
-        /// <param name="portAddress">Stores the memory location of the port.</param>
+        /// <param name="portAddress">Stores the memory location of the port used to connect back to Reloaded-Assembler.</param>
         public static void Initialize(IntPtr portAddress)
         {
             AppDomain.CurrentDomain.AssemblyResolve += LocalAssemblyFinder.ResolveAssembly;

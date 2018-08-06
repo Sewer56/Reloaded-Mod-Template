@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 using libReloaded_Networking;
 using LiteNetLib;
 
-namespace Reloaded_Mod_Template.ReloadedCode
+namespace Reloaded_Mod_Template.ReloadedTemplate
 {
     /// <summary>
     /// Class used for providing services via communication with the Mod Loader server.

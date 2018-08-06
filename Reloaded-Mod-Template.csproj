@@ -94,9 +94,9 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ReloadedCode\Client.cs" />
-    <Compile Include="ReloadedCode\Initializer.cs" />
-    <Compile Include="ReloadedCode\LocalAssemblyFinder.cs" />
+    <Compile Include="ReloadedTemplate\Client.cs" />
+    <Compile Include="ReloadedTemplate\Initializer.cs" />
+    <Compile Include="ReloadedTemplate\LocalAssemblyFinder.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Config.json">

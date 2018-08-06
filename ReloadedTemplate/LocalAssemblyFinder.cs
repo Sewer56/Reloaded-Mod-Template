@@ -20,11 +20,9 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using Reloaded;
 
-namespace Reloaded_Mod_Template.ReloadedCode
+namespace Reloaded_Mod_Template.ReloadedTemplate
 {
     /// <summary>
     /// You know how when you inject a DLL into a process it will fail to find any of the libraries that 
@@ -32,6 +30,30 @@ namespace Reloaded_Mod_Template.ReloadedCode
     /// </summary>
     public static class LocalAssemblyFinder 
     {
+        /// <summary>
+        /// Redirects requests to find main.dll to our own renamed versions (main32.dll and main64.dll) appropriately
+        /// for the purpose of reloading this DLL in another appdomain.
+        /// </summary>
+        public static Assembly ResolveAppDomainAssembly(object sender, ResolveEventArgs args)
+        {
+            // Get the folder name of this directory containing our DLL.
+            // And strip the requested DLL name as well as our own for comparison.
+            string modFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\";
+            string thisDllName = Path.GetFileName(Assembly.GetExecutingAssembly().Location);
+            string targetDllName = new AssemblyName(args.Name).Name + ".dll";
+
+            // If the DLL the program wants is main.dll, we replace it with our own main32/main64.dll we are executing from.
+            // This is so that the new AppDomain loads the exact same DLL as our own and does not throw on casting a type.
+            if (targetDllName == "main.dll")
+            { targetDllName = thisDllName; }
+
+            // Now we try to load the DLL :)
+            if (File.Exists(modFolder + targetDllName))
+                return Assembly.LoadFrom(modFolder + targetDllName);
+            else
+                return ResolveAssembly(sender, args);
+        }
+
         /// <summary>
         /// Finds and retrieves an Assembly/Module/DLL from the libraries folder in the case it is not
         /// yet loaded or the mod fails to find the assembly.
@@ -50,15 +72,15 @@ namespace Reloaded_Mod_Template.ReloadedCode
             localLibrary += dllName;
             thisFolderLibrary += dllName;
 
-            // Check if the library is present in a static compile.
-            if (File.Exists(localLibrary))
-                return Assembly.LoadFrom(localLibrary);
-
-            // Check if the library is present in a static compile.
+            // Try loading from the current folder.
             if (File.Exists(thisFolderLibrary))
                 return Assembly.LoadFrom(thisFolderLibrary);
 
-            // Else try to find it in the mod directory.
+            // Try loading from local library folder.
+            if (File.Exists(localLibrary))
+                return Assembly.LoadFrom(localLibrary);
+
+            // Panic mode! Search all subdirectories!
             else
             {
                 // Obtain potential libraries.

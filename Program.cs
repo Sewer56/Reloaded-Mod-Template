@@ -13,6 +13,7 @@ namespace Reloaded_Mod_Template
 {
     public static unsafe class Program
     {
+        #region Mod Loader Template Description & Explanation | Your first time? Read this.
         /*
          *  Reloaded Mod Loader DLL Modification Template
          *  Sewer56, 2018 ©
@@ -63,11 +64,11 @@ namespace Reloaded_Mod_Template
          *
          *  [Template] Brief Walkthrough:
          *
-         *  > ReloadedCode/Initializer.cs
+         *  > ReloadedTemplate/Initializer.cs
          *      Stores Reloaded Mod Loader DLL Template/Initialization Code.
          *      You are not required/should not (need) to modify any of the code.
          *
-         *  > ReloadedCode/Client.cs
+         *  > ReloadedTemplate/Client.cs
          *      Contains various pieces of code to interact with the mod loader server.
          *
          *      For convenience it's recommended you import Client static(ally) into your
@@ -88,6 +89,7 @@ namespace Reloaded_Mod_Template
          *  Please keep this notice here for future contributors or interested parties.
          *  If it bothers you, consider wrapping it in a #region.
         */
+        #endregion Mod Loader Template Description
 
         /*
             Default Variables:
