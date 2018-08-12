@@ -105,10 +105,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="libReloaded">
-      <Version>1.2.1-dev1</Version>
+      <Version>1.2.2-dev</Version>
     </PackageReference>
     <PackageReference Include="libReloaded-Paths">
-      <Version>1.2.1-dev1</Version>
+      <Version>1.2.2-dev</Version>
     </PackageReference>
     <PackageReference Include="LiteNetLib-custom">
       <Version>0.0.1</Version>
