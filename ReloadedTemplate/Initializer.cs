@@ -20,6 +20,7 @@ namespace Reloaded_Mod_Template.ReloadedTemplate
     {
         public void Run(IntPtr portLocation)
         {
+            AppDomain.CurrentDomain.UnhandledException += Init.ChildDomain_UnhandledException; // Pass exceptions to default AppDomain on crashes.
             Init.Initialize(portLocation);
         }
     }
@@ -55,8 +56,7 @@ namespace Reloaded_Mod_Template.ReloadedTemplate
 
                 // Now make the new AppDomain load our code using our proxy.
                 Type proxyType = typeof(InitProxy);
-                var initProxy = (InitProxy)_childDomain.CreateInstanceFrom(proxyType.Assembly.Location, proxyType.FullName).Unwrap(); // Our AssemblyResolve will pick the missing DLL out.
-                _childDomain.UnhandledException += _childDomain_UnhandledException; // Pass exceptions to default AppDomain on crashes.
+                dynamic initProxy = _childDomain.CreateInstanceFrom(proxyType.Assembly.Location, proxyType.FullName).Unwrap(); // Our AssemblyResolve will pick the missing DLL out.
                 initProxy.Run(portAddress);
             }
             catch (Exception ex)
@@ -69,7 +69,7 @@ namespace Reloaded_Mod_Template.ReloadedTemplate
         /// Throws exceptions in the default AppDomain when/if the application crashes.
         /// VS may otherwise fail to get the stack trace.
         /// </summary>
-        private static void _childDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        public static void ChildDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             throw (Exception)e.ExceptionObject;
         }
